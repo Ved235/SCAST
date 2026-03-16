@@ -9,6 +9,13 @@ import {exec} from 'child_process'
 const port = 5305;
 const directoryPath = process.argv[2]||process.cwd();
 
+function getSafeFilePath(baseDir, requestPath) {
+  const normalized = path.normalize(requestPath)
+  const fullPath = path.resolve(baseDir, './'+normalized);
+  // console.log("safe path",normalized,fullPath)
+  return fullPath.startsWith(baseDir + path.sep) || fullPath === baseDir?fullPath:null;
+}
+
 const TYPE_MINE={
   '.html':'text/html',
   '.css':'text/css',
@@ -18,27 +25,38 @@ const TYPE_MINE={
 
 http.createServer((req, res) => {
   var u=url.parse(req.url)
-  var filePath = path.join(directoryPath, u.pathname === '/' ? 'SCAST.html' : u.pathname);
+  // var filePath = path.join(directoryPath, u.pathname === '/' ? 'SCAST.html' : u.pathname);
+  var filePath = getSafeFilePath(directoryPath, u.pathname === '/' ? 'SCAST.html' : u.pathname);
   if(u.pathname=='/rawtext'){
-    filePath=path.join(directoryPath,u.query.replace('file=',''))
+    filePath=getSafeFilePath(directoryPath,u.query.replace('file=',''))
   }
   if(u.pathname=='/save'&&req.method=='POST'){
-    
     var form=new multiparty.Form();
     form.parse(req,function(err,fields,files){
       console.log('save',fields.file)
       try{
-        fs.writeFileSync(path.join(directoryPath,fields.file[0]),fields.content[0])
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end('save ok');
+        filePath=getSafeFilePath(directoryPath,fields.file[0])
+        console.log('save file to',filePath)
+        if(filePath!=null){
+          fs.writeFileSync(filePath,fields.content[0])
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
+          return res.end('save ok');
+        }else{
+          res.writeHead(403, { 'Content-Type': 'text/plain' });
+          return res.end('403 Forbidden');
+        }
       }catch(err){
         res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('save file error');
+        return res.end('save file error');
       }
     })
-    return;
+    return
   }
   console.log(u.pathname,u.query,filePath)
+  if(filePath==null){
+    res.writeHead(403, { 'Content-Type': 'text/plain' });
+    return res.end('403 Forbidden');
+  }
   fs.readFile(filePath, (err, data) => {
     if (err) {
       if (err.code === 'ENOENT') {

@@ -1,5 +1,5 @@
 
-const LIBPATH='../lib'
+const LIBPATH='../lib/TreeSitter/'
 window.TreeSitter=(function(){
     var Code='';
     var types={
@@ -16,16 +16,16 @@ window.TreeSitter=(function(){
         "If":true
     }
     const LANGUAGE_WASM={
-        'js':LIBPATH+'/TreeSitter/tree-sitter-javascript.wasm',
-        'ts':LIBPATH+'/TreeSitter/tree-sitter-typescript.wasm',
-        'py':LIBPATH+'/TreeSitter/tree-sitter-python.wasm',
-        'sh':LIBPATH+'/TreeSitter/tree-sitter-bash.wasm',
-        'cs':LIBPATH+'/TreeSitter/tree-sitter-c_sharp.wasm',
-        'cpp':LIBPATH+'/TreeSitter/tree-sitter-cpp.wasm',
-        'c':LIBPATH+'/TreeSitter/tree-sitter-c.wasm',
-        'hlsl':LIBPATH+'/TreeSitter/tree-sitter-c.wasm',
-        'shader':LIBPATH+'/TreeSitter/tree-sitter-c.wasm',
-        'compute':LIBPATH+'/TreeSitter/tree-sitter-c.wasm',
+        'js':LIBPATH+'tree-sitter-javascript.wasm',
+        'ts':LIBPATH+'tree-sitter-typescript.wasm',
+        'py':LIBPATH+'tree-sitter-python.wasm',
+        'sh':LIBPATH+'tree-sitter-bash.wasm',
+        'cs':LIBPATH+'tree-sitter-c_sharp.wasm',
+        'cpp':LIBPATH+'tree-sitter-cpp.wasm',
+        'c':LIBPATH+'tree-sitter-c.wasm',
+        'hlsl':LIBPATH+'tree-sitter-c.wasm',
+        'shader':LIBPATH+'tree-sitter-c.wasm',
+        'compute':LIBPATH+'tree-sitter-c.wasm',
     }
 
     var language_parser={
